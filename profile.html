@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K4OPL4YLIST - Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Core Variables & Hub Global Setup (60/30/10) --- */
+        :root {
+            --bg-global: #07070a;      
+            --surface-global: #12131a; 
+            --accent-global: #66fcf1;  
+            --text-light: #ffffff;
+            --text-muted: #9ca3af;
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Prompt', sans-serif; transition: var(--transition); }
+        body { background-color: var(--bg-global); color: var(--text-light); min-height: 100vh; padding-bottom: 60px; }
+        .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+        
+        /* --- View Management (UX) --- */
+        .view-section { display: none; animation: fadeIn 0.5s ease forwards; }
+        .view-section.active-view { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- LANDING PAGE STYLE --- */
+        .landing-header { text-align: center; padding: 80px 20px 40px; }
+        .landing-header h1 { font-family: 'Montserrat', sans-serif; font-size: 2.6rem; font-weight: 700; margin-bottom: 10px; }
+        .landing-header p { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--accent-global); letter-spacing: 4px; font-weight: 600; text-transform: uppercase; }
+        .hub-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
+        .hub-card { background-color: var(--surface-global); border: 1px solid rgba(255,255,255,0.02); border-radius: 24px; padding: 35px 25px; text-align: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .hub-card:hover { transform: translateY(-5px); }
+        .card-flower:hover { border-color: #f694b7; box-shadow: 0 15px 30px rgba(246, 148, 183, 0.2); }
+        .card-studio:hover { border-color: #ffcc00; box-shadow: 0 15px 30px rgba(255, 204, 0, 0.15); }
+        .card-skugga:hover { border-color: #d48c46; box-shadow: 0 15px 30px rgba(212, 140, 70, 0.15); }
+        .hub-card .icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+        .hub-card h3 { font-size: 1.35rem; font-weight: 600; margin-bottom: 6px; }
+        .hub-card p { font-size: 0.88rem; color: var(--text-muted); }
+
+        /* --- FLOATING BACK BUTTON --- */
+        .floating-back { display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 999; padding: 14px 30px; border-radius: 30px; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        .floating-back:hover { transform: translateX(-50%) translateY(-2px); }
+
+        /* --- SHOP UNIVERSAL LAYOUT --- */
+        .shop-wrapper { border-radius: 28px; padding: 35px 25px; margin-top: 20px; }
+        .shop-wrapper h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
+        .shop-wrapper > p { font-size: 0.95rem; margin-bottom: 30px; }
+        .form-group { margin-bottom: 24px; }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 0; }
+        @media (min-width: 600px) { .form-row { grid-template-columns: 1fr 1fr; gap: 20px; } }
+        label { display: block; margin-bottom: 10px; font-size: 0.88rem; font-weight: 500; }
+        input, select, textarea { width: 100%; padding: 16px; border-radius: 14px; font-size: 0.98rem; outline: none; border: 1px solid transparent; }
+        .submit-btn, .social-btn { width: 100%; padding: 18px; border: none; border-radius: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none; }
+        .social-links-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 25px; }
+        @media (min-width: 600px) { .social-links-grid { grid-template-columns: 1fr 1fr; } }
+        .map-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 18px; margin-bottom: 30px; }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        /* ========================================================== */
+        /* 🌸 SHOP 1: PAPER FLOWERS CUSTOM THEME (Pastel Blue & Pink) */
+        /* ========================================================== */
+        body.theme-flower { 
+            background-color: #dbeafe; 
+            background-image: linear-gradient(135deg, #dbeafe 0%, #fce7f3 100%); 
+            color: #374151; 
+        }
+        .shop-wrapper.flower-style { background-color: rgba(255, 255, 255, 0.85); border: 1px solid #bfdbfe; backdrop-filter: blur(10px); box-shadow: 0 15px 35px rgba(191,219,254,0.5); }
+        .shop-section.flower-style h2 { color: #1f2937; }
+        .shop-wrapper.flower-style > p { color: #4b5563; }
+        .theme-flower input, .theme-flower select, .theme-flower textarea { background-color: #ffffff; border: 1.5px solid #cbd5e1; color: #1f2937; }
+        .theme-flower input:focus, .theme-flower select:focus { border-color: #f472b6; }
+        .theme-flower .info-box { background-color: #eff6ff; border-left: 5px solid #3b82f6; padding: 20px; border-radius: 16px; margin-bottom: 30px; color: #1e40af; font-size: 0.92rem; line-height: 1.6; }
+        .theme-flower .price-summary { background-color: #fff1f2; padding: 25px; border-radius: 20px; text-align: center; border: 1px dashed #f472b6; margin-top: 10px; }
+        .theme-flower .price-highlight { color: #db2777; font-size: 2.2rem; font-weight: 800; font-family: 'Montserrat', sans-serif; }
+        .theme-flower .submit-btn, .theme-flower .floating-back { background-color: #f472b6; color: #ffffff; }
+        .theme-flower .submit-btn:hover, .theme-flower .floating-back:hover { background-color: #ec4899; }
+        .theme-flower .social-btn-ig { background-color: #60a5fa; color: #fff; } 
+        .theme-flower .social-btn-tt { background-color: #ffffff; color: #374151; border: 1px solid #cbd5e1; }
+
+        /* ========================================================== */
+        /* 📸 SHOP 2: KS STUDIO CUSTOM THEME (ดาร์กไซเบอร์-เหลือง) */
+        /* ========================================================== */
+        body.theme-studio { background-color: #0b0c10; color: #c5a880; }
+        .shop-wrapper.studio-style { background-color: #12131c; border: 1px solid rgba(255,255,255,0.02); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .studio-title-area { text-align: center; margin-bottom: 30px; }
+        .studio-badge { display: inline-block; background-color: #ffcc00; color: #000; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .price-list-container { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 30px; }
+        @media (min-width: 600px) { .price-list-container { grid-template-columns: 1fr 1fr; } }
+        .price-item { background: #191b26; border: 1px solid rgba(255,255,255,0.05); padding: 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .price-item .service-info h4 { font-size: 0.98rem; color: #ffffff; font-weight: 600; margin-bottom: 4px; }
+        .price-item .service-info p { font-size: 0.8rem; color: #8892b0; }
+        .price-item .service-cost { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #ffcc00; font-size: 1.1rem; text-align: right; }
+        .price-item .service-cost span { font-size: 0.75rem; color: #8892b0; font-weight: 400; margin-left: 2px; }
+        
+        .studio-footer-info { background: rgba(255, 204, 0, 0.05); border: 1px dashed rgba(255, 204, 0, 0.2); padding: 16px; border-radius: 14px; text-align: center; font-size: 0.88rem; color: #ffcc00; margin-bottom: 25px; }
+        .theme-studio .social-btn-ig { background-color: #ffcc00; color: #050508; font-weight: 700; }
+        .theme-studio .social-btn-ig:hover { background-color: #e6b800; transform: translateY(-2px); }
+        .theme-studio .floating-back { background-color: #ffcc00; color: #050508; font-weight: 600; }
+
+        /* ========================================================== */
+        /* 🍫 SHOP 3: SKUGGA ESTATE CUSTOM THEME (ดิบ โลคอล) */
+        /* ========================================================== */
+        body.theme-skugga { background-color: #121412; color: #ecebe6; }
+        .shop-wrapper.skugga-style { background-color: #221c16; border: 1px solid #2f2720; }
+        .shop-wrapper.skugga-style > p { color: #b5afaa; }
+        .theme-skugga input, .theme-skugga select, .theme-skugga textarea { background-color: #17130f; border: 1.5px solid #3d3229; color: #ffffff; }
+        .theme-skugga input:focus, .theme-skugga select:focus { border-color: #d48c46; }
+        .theme-skugga .skugga-tag { background-color: #17130f; color: #e2dcd5; padding: 20px; border-radius: 16px; margin-bottom: 25px; border-left: 4px solid #d48c46; }
+        
+        /* ปรับสไตล์ปุ่มสาขาให้รองรับ 4 ปุ่ม (2 คอลัมน์บน Desktop) */
+        .skugga-branches { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 25px; }
+        @media (min-width: 600px) { .skugga-branches { grid-template-columns: 1fr 1fr; } }
+        .btn-branch { background-color: #2b231c; border: 1px solid #3d3229; color: #ecebe6; padding: 15px; border-radius: 14px; text-decoration: none; text-align: center; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-branch:hover { background-color: #d48c46; color: #121412; border-color: #d48c46; }
+        
+        .theme-skugga .social-btn-shopee { background-color: #df4a1e; color: #fff; }
+        .theme-skugga .social-btn-tt { background-color: #ffffff; color: #121412; }
+        .theme-skugga .submit-btn, .theme-skugga .floating-back { background-color: #d48c46; color: #121412; }
+        .theme-skugga .submit-btn:hover, .theme-skugga .floating-back:hover { background-color: #bf7935; }
+    </style>
+</head>
+<body>
+
+    <button id="back-trigger" class="floating-back" onclick="navigateToHub()">← กลับหน้าแรก</button>
+
+    <div class="container">
+
+        <div id="view-landing" class="view-section active-view">
+            <header class="landing-header">
+                <h1 id="landing-title">@k4opl4ylist._</h1>
+                <p id="landing-desc">Our Businesses & Services</p>
+            </header>
+            <div class="hub-grid">
+                <div class="hub-card card-flower" onclick="enterShop('flower')">
+                    <span class="icon">🌸</span>
+                    <h3 id="card-title-flower">@paper.flo.wers</h3>
+                    <p id="card-desc-flower">ร้านดอกไม้กระดาษแฮนด์เมด</p>
+                </div>
+                <div class="hub-card card-studio" onclick="enterShop('studio')">
+                    <span class="icon">📸</span>
+                    <h3 id="card-title-studio">@._ks.studio._</h3>
+                    <p id="card-desc-studio">บริการถ่ายภาพระดับมืออาชีพ</p>
+                </div>
+                <div class="hub-card card-skugga" onclick="enterShop('skugga')">
+                    <span class="icon">🍫</span>
+                    <h3 id="card-title-skugga">@skugga.estate</h3>
+                    <p id="card-desc-skugga">ฟาร์มโกโก้ ไวน์ และเบียร์คราฟต์โลคอล</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-flower" class="view-section">
+            <div class="shop-wrapper flower-style">
+                <h2 id="shop-name-flower">🌸 @paper.flo.wers</h2>
+                <p id="shop-bio-flower">The flowers made from love.... งานดีไซน์ประดิษฐ์จากกระดาษเกรดคัดสรร</p>
+                
+                <div class="info-box" id="shop-info-flower">
+                    <strong>📍 ระบบการจัดส่งและนัดรับ:</strong><br>
+                    • นัดรับ : บริเวณโรงเรียนปรินส์รอยแยลส์วิทยาลัย, ดาราวิทยาลัย และใกล้เคียง (ช่วงเปิดเทอม/ภาคฤดูร้อน)<br>
+                    • นัดรับ : บริเวณร้านอาหารเอกทิพย์โชคดี, ห้างสรรพสินค้าเมญ่า และใกล้เคียง<br>
+                    • ขนส่ง : บริการ Flash Express ทั่วประเทศ (แจ้งเลขพัสดุผ่านทางช่องแชท DM Instagram)
+                </div>
+
+                <div class="form-group">
+                    <label>เลือกแบบกระดาษห่อ (มีให้เลือก 4 แบบ)</label>
+                    <select>
+                        <option>กระดาษสีธรรมดา</option>
+                        <option>กระดาษสาสำหรับห่อดอกไม้</option>
+                        <option>กระดาษห่อดอกไม้ธรรมดา</option>
+                        <option>กระดาษห่อดอกไม้ขอบทอง</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>เลือกแบบริบบิ้น (มีให้เลือก 3 แบบ)</label>
+                        <select>
+                            <option>ริบบิ้นผ้าแก้ว</option>
+                            <option>ริบบิ้นผ้าซาติน (เส้นใหญ่)</option>
+                            <option>ริบบิ้นผ้าซาติน (เส้นเล็ก)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>จำนวนที่ต้องการสั่งซื้อ</label>
+                        <select id="flower-qty-select" onchange="updateFlowerPrice(this.value)">
+                            <option value="29">1 ดอก</option>
+                            <option value="89">3 ดอก</option>
+                            <option value="147">5 ดอก</option>
+                            <option value="205">7 ดอก</option>
+                            <option value="350">12 ดอก</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="price-summary">
+                    <div style="font-size: 0.9rem; font-weight: 600; text-transform: uppercase; color: #4b5563;">Estimated Total</div>
+                    <div class="price-highlight" id="flower-price-display">29 บาท</div>
+                </div>
+
+                <div class="social-links-grid">
+                    <a href="https://www.instagram.com/paper.flo.wers" target="_blank" class="social-btn social-btn-ig">📷 สั่งผ่าน Instagram DM</a>
+                    <a href="https://www.tiktok.com/@paper.flo.wers" target="_blank" class="social-btn social-btn-tt">🎵 ติดตามผ่านช่อง TikTok</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-studio" class="view-section">
+            <div class="shop-wrapper studio-style">
+                <div class="studio-title-area">
+                    <div class="studio-badge">Photography & Media</div>
+                    <h2 id="shop-name-studio" style="color: #ffffff;">📸 @._ks.studio._</h2>
+                    <p id="shop-bio-studio" style="color: #8892b0; font-size: 0.9rem; margin-top: 5px;">
+                        Capturing moments from every perspective. Based in Chiang Mai, Thailand.
+                    </p>
+                </div>
+
+                <div class="price-list-container">
+                    <div class="price-item">
+                        <div class="service-info">
+                            <h4>Solo / Portrait</h4>
+                            <p>ถ่ายภาพนิ่งบุคคลเดี่ยว (แต่งไฟล์ Lr/Ps)</p>
+                        </div>
+                        <div class="service-cost">200.-<span>เริ่มต้น</span></div>
+                    </div>
+                    <div class="price-item">
+                        <div class="service-info">
+                            <h4>Event</h4>
+                            <p>ถ่ายภาพนิ่งงานอีเว้นต์ / กิจกรรมต่างๆ</p>
+                        </div>
+                        <div class="service-cost">300.-<span>เริ่มต้น</span></div>
+                    </div>
+                    <div class="price-item">
+                        <div class="service-info">
+                            <h4>Group</h4>
+                            <p>ถ่ายภาพกลุ่ม (ราคาตามจำนวนคน)</p>
+                        </div>
+                        <div class="service-cost">DM<span>สอบถาม</span></div>
+                    </div>
+                    <div class="price-item">
+                        <div class="service-info">
+                            <h4>Short Video / Reels</h4>
+                            <p>ตัดต่อและเกรดสีสำหรับ TikTok / Reels</p>
+                        </div>
+                        <div class="service-cost">590.-<span>/คลิป</span></div>
+                    </div>
+                    <div class="price-item">
+                        <div class="service-info">
+                            <h4>Cinematic Video</h4>
+                            <p>งาน Presentation / วิดีโอโปรดักชั่น</p>
+                        </div>
+                        <div class="service-cost">1,900.-<span>เริ่มต้น</span></div>
+                    </div>
+                    <div class="price-item">
+                        <div class="service-info">
+                            <h4>Drone / มุมสูง</h4>
+                            <p>ถ่ายภาพนิ่งและวิดีโอทางอากาศ</p>
+                        </div>
+                        <div class="service-cost">1,200.-<span>เริ่มต้น</span></div>
+                    </div>
+                    <div class="price-item" style="grid-column: 1 / -1;">
+                        <div class="service-info">
+                            <h4>Live Streaming</h4>
+                            <p>ระบบไลฟ์สดสตรีมมิ่งครบวงจร (vMix System)</p>
+                        </div>
+                        <div class="service-cost">3,500.-<span>เริ่มต้น</span></div>
+                    </div>
+                </div>
+
+                <div class="studio-footer-info">
+                    🕒 เวลาทำการแอดมิน: 09:00 - 21:00 น. (ทักเช็กคิวและประเมินราคาได้ทันที)
+                </div>
+
+                <div class="social-links-grid" style="grid-template-columns: 1fr;">
+                    <a href="https://www.instagram.com/_.ks.studio._" target="_blank" class="social-btn social-btn-ig" style="padding: 20px; font-size: 1.05rem;">
+                        📥 ส่งข้อความเพื่อจองคิวงานผ่าน Instagram DM
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-skugga" class="view-section">
+            <div class="shop-wrapper skugga-style">
+                <h2 id="shop-name-skugga">🍫 @skugga.estate</h2>
+                <p id="shop-bio-skugga">หน้าอินสตาแกรมแยกตามสาขาและโปรเจกต์ของทางร้าน:</p>
+                
+                <div class="skugga-tag" id="shop-story-skugga">
+                    <strong>"Skugga" เป็นภาษาสวีเดน แปลว่า ร่มเงา</strong> ซึ่งร่มเงาจากต้นไม้ใหญ่คือปัจจัยและวัตถุดิบสำคัญที่สุดในการปกป้องและหล่อเลี้ยงต้นโกโก้ให้เติบโตตามธรรมชาติ เราไม่เน้นความหรูหรา แต่เราขายเสน่ห์ของธรรมชาติที่แท้จริง เมล็ดโกโก้พื้นเมือง ผลิตภัณฑ์ไวน์ และเบียร์คราฟต์ที่เต็มไปด้วยจิตวิญญาณแห่งความโลคอล
+                </div>
+
+                <div class="skugga-branches">
+                    <a href="https://www.instagram.com/skugga.estate" target="_blank" class="btn-branch">🌲 สาขาแม่ออน (Main Cafe)</a>
+                    <a href="https://www.instagram.com/skugga.life" target="_blank" class="btn-branch">🏙️ สาขานิมมาน (City Space)</a>
+                    <a href="https://www.instagram.com/skugga.garage?igsh=cmR3cDNhcmFmbW9p" target="_blank" class="btn-branch">🏎️ Skugga Garage</a>
+                    <a href="https://www.instagram.com/skugga.vineyard?igsh=MWhtemZ6emJhaWYxeQ==" target="_blank" class="btn-branch">🍇 Skugga Vineyard</a>
+                </div>
+
+                <div class="map-container">
+                    <iframe src="https://maps.google.com/maps?q=Skugga%20Estate&t=&z=13&ie=UTF8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+
+                <div class="social-links-grid">
+                    <a href="https://shopee.co.th/skugga.estate" target="_blank" class="social-btn social-btn-shopee">🛍️ สั่งซื้อบน Shopee</a>
+                    <a href="https://www.tiktok.com/@skugga.estate" target="_blank" class="social-btn social-btn-tt">🎥 ติดตามทาง TikTok</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function loadLiveContent() {
+            const cms = JSON.parse(localStorage.getItem('k4o_cms_data'));
+            if (!cms) return;
+            
+            if(cms.hub.title) document.getElementById('landing-title').innerText = cms.hub.title;
+            if(cms.hub.desc) document.getElementById('landing-desc').innerText = cms.hub.desc;
+            
+            if(cms.flower.title) {
+                document.getElementById('card-title-flower').innerText = cms.flower.title;
+                document.getElementById('shop-name-flower').innerText = "🌸 " + cms.flower.title;
+            }
+            if(cms.flower.desc) document.getElementById('card-desc-flower').innerText = cms.flower.desc;
+            if(cms.flower.bio) document.getElementById('shop-bio-flower').innerText = cms.flower.bio;
+
+            if(cms.studio.title) {
+                document.getElementById('card-title-studio').innerText = cms.studio.title;
+                document.getElementById('shop-name-studio').innerText = "📸 " + cms.studio.title;
+            }
+            if(cms.studio.desc) document.getElementById('card-desc-studio').innerText = cms.studio.desc;
+
+            if(cms.skugga.title) {
+                document.getElementById('card-title-skugga').innerText = cms.skugga.title;
+                document.getElementById('shop-name-skugga').innerText = "🍫 " + cms.skugga.title;
+            }
+            if(cms.skugga.desc) document.getElementById('card-desc-skugga').innerText = cms.skugga.desc;
+            if(cms.skugga.story) document.getElementById('shop-story-skugga').innerHTML = `<strong>สตอรี่แบรนด์:</strong> ${cms.skugga.story}`;
+        }
+
+        function updateFlowerPrice(value) {
+            const suffix = value === "350" ? " บาท *ส่งฟรี" : " บาท";
+            document.getElementById('flower-price-display').innerText = value + suffix;
+        }
+
+        function enterShop(shopType) {
+            document.getElementById('view-landing').style.display = 'none';
+            document.getElementById('back-trigger').style.display = 'inline-flex';
+            document.body.className = '';
+
+            if (shopType === 'flower') {
+                document.getElementById('view-flower').classList.add('active-view');
+                document.body.classList.add('theme-flower');
+                recordActivity('flower');
+            } else if (shopType === 'studio') {
+                document.getElementById('view-studio').classList.add('active-view');
+                document.body.classList.add('theme-studio');
+                recordActivity('studio');
+            } else if (shopType === 'skugga') {
+                document.getElementById('view-skugga').classList.add('active-view');
+                document.body.classList.add('theme-skugga');
+                recordActivity('skugga');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function navigateToHub() {
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(v => v.classList.remove('active-view'));
+            document.getElementById('back-trigger').style.display = 'none';
+            document.getElementById('view-landing').style.display = 'block';
+            document.body.className = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function recordActivity(shop) {
+            let metrics = JSON.parse(localStorage.getItem('k4o_metrics')) || { total: 105, flower: 34, studio: 21, skugga: 50, logs: [] };
+            metrics.total += 1;
+            metrics[shop] += 1;
+            
+            const timestamp = new Date().toLocaleTimeString('th-TH');
+            metrics.logs.unshift({ shop: shop, time: timestamp });
+            if(metrics.logs.length > 10) metrics.logs.pop();
+            
+            localStorage.setItem('k4o_metrics', JSON.stringify(metrics));
+        }
+
+        window.onload = loadLiveContent;
+    </script>
+</body>
+</html>
