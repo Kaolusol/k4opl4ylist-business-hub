@@ -113,7 +113,6 @@
         .theme-skugga input:focus, .theme-skugga select:focus { border-color: #d48c46; }
         .theme-skugga .skugga-tag { background-color: #17130f; color: #e2dcd5; padding: 20px; border-radius: 16px; margin-bottom: 25px; border-left: 4px solid #d48c46; }
         
-        /* ปรับสไตล์ปุ่มสาขาให้รองรับ 4 ปุ่ม (2 คอลัมน์บน Desktop) */
         .skugga-branches { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 25px; }
         @media (min-width: 600px) { .skugga-branches { grid-template-columns: 1fr 1fr; } }
         .btn-branch { background-color: #2b231c; border: 1px solid #3d3229; color: #ecebe6; padding: 15px; border-radius: 14px; text-decoration: none; text-align: center; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -314,29 +313,43 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://esm.sh/firebase@10.8.0/app";
-        import { getAnalytics, logEvent } from "https://esm.sh/firebase@10.8.0/analytics";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Your web app's Firebase configuration
+        // ใช้ Config จริงเดียวกับหน้า Admin (แก้ไขเชื่อมคลาวด์ตัวจริงแล้ว)
         const firebaseConfig = {
-            apiKey: "AIzaSyBpzoSkEsUxp6tx_pD5k-yuWnhqHhw2Qpg",
-            authDomain: "business-hub-899db.firebaseapp.com",
-            projectId: "business-hub-899db",
-            storageBucket: "business-hub-899db.firebasestorage.app",
-            messagingSenderId: "693660738256",
-            appId: "1:693660738256:web:5840ff6edaec31d532f4d5",
-            measurementId: "G-H4J7EPR5NY"
+            apiKey: "AIzaSyA7i2asls_qnIk3tjIwNU44c8IjgJ51E24",
+            authDomain: "admin-business-hub.firebaseapp.com",
+            databaseURL: "https://admin-business-hub-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "admin-business-hub",
+            storageBucket: "admin-business-hub.firebasestorage.app",
+            messagingSenderId: "909527651285",
+            appId: "1:909527651285:web:32a1986f02791b4294e35c",
+            measurementId: "G-TYPNJV4HTQ"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
 
-        // ฟังก์ชันสำหรับส่ง Event ไปที่ Firebase Analytics
-        window.recordFirebaseActivity = function(shopName) {
-            logEvent(analytics, 'select_content', {
-                content_type: 'shop_view',
-                item_id: shopName
+        // ฟังก์ชันระบบคลาวด์ยิงจำนวนการกดเข้าสู่แอดมินโดยตรง
+        window.recordFirebaseActivity = function(shopKey) {
+            const totalRef = ref(db, 'k4o_metrics/total');
+            const shopRef = ref(db, `k4o_metrics/${shopKey}`);
+            const logsRef = ref(db, 'k4o_metrics/logs');
+
+            // 1. เพิ่มยอดรวมบวกหนึ่ง
+            runTransaction(totalRef, (current) => (current || 0) + 1);
+
+            // 2. เพิ่มยอดแยกตามร้านค้าบวกหนึ่ง
+            runTransaction(shopRef, (current) => (current || 0) + 1);
+
+            // 3. ป้อนบันทึกกิจกรรมล่าสุดส่งตรงไปหน้าสตรีมแอดมิน
+            const timeString = new Date().toLocaleTimeString('th-TH');
+            runTransaction(logsRef, (currentLogs) => {
+                let logs = currentLogs || [];
+                logs.unshift({ shop: shopKey, time: timeString });
+                if (logs.length > 7) logs.pop(); // จำกัดคิวสูงสุด 7 แถวในหน้าจอ
+                return logs;
             });
         };
     </script>
@@ -406,7 +419,7 @@
         }
 
         function recordActivity(shop) {
-            // 1. บันทึกลง LocalStorage ตามโครงสร้างเดิมของคุณ
+            // 1. เก็บจำลองที่เครื่องเดิม (Local)
             let metrics = JSON.parse(localStorage.getItem('k4o_metrics')) || { total: 105, flower: 34, studio: 21, skugga: 50, logs: [] };
             metrics.total += 1;
             metrics[shop] += 1;
@@ -417,7 +430,7 @@
             
             localStorage.setItem('k4o_metrics', JSON.stringify(metrics));
 
-            // 2. เรียกใช้งานฟังก์ชันยิง Analytics ไปที่ Firebase Dashboard ทันที
+            // 2. เรียกปืนใหญ่ยิงตรงไปที่ระบบฐานข้อมูลกลางตัวจริงของแอดมินทันที
             if (typeof window.recordFirebaseActivity === 'function') {
                 window.recordFirebaseActivity(shop);
             }
